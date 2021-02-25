@@ -86,6 +86,7 @@ binance_sign <- function(params) {
 #' @param content_as parameter to httr::content
 #' @return R object
 #' @keywords internal
+#' @export
 #' @importFrom httr headers add_headers
 binance_query <- function(endpoint, method = 'GET',
                           params = list(), body = NULL, sign = FALSE,
@@ -686,8 +687,8 @@ binance_mytrades <- function(symbol, limit, from_id, start_time, end_time) {
 #' binance_new_order('ARKBTC', side = 'BUY', type = 'LIMIT', quantity = 1,
 #'                   price = 0.5, time_in_force = 'GTC')
 #' }
-binance_new_order <- function(symbol, side, type, time_in_force, quantity, price, stop_price, iceberg_qty, test = TRUE) {
-
+binance_new_order <- function(symbol, side, type, time_in_force, quantity, price, stop_price, iceberg_qty, test = TRUE, pause = FALSE) {
+    if(pause) browser()
     side <- match.arg(side)
     type <- match.arg(type)
 
@@ -751,6 +752,7 @@ binance_new_order <- function(symbol, side, type, time_in_force, quantity, price
         if (filters[filterType == 'PRICE_FILTER', tickSize] > 0) {
             # work around the limitation of %% (e.g. 200.1 %% 0.1 = 0.1 !!)
             quot <- (price - filters[filterType == 'PRICE_FILTER', minPrice]) / filters[filterType == 'PRICE_FILTER', tickSize]
+            quot <- round(quot)
             stopifnot(abs(quot - round(quot)) < 1e-10)
         }
 
